@@ -1,5 +1,5 @@
 from playwright.sync_api import sync_playwright
-from pages.douban_top250_page import DoubanTop250Page
+from pages.douban_page import DoubanTop250Page
 
 def main():
     with sync_playwright() as p:

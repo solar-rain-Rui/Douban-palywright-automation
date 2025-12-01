@@ -1,6 +1,6 @@
 import pytest
 from playwright.sync_api import Page
-from pages.douban_top250_page import  DoubanTop250Page
+from pages.douban_page import  DoubanTop250Page
 
 
 def test_douban_top250_titles(page: Page):
