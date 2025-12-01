@@ -1,0 +1,28 @@
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Python 虚拟环境
+.venv/
+venv/
+env/
+
+# 编译文件
+__pycache__/
+*.pyc
+
+# Playwright 浏览器缓存
+playwright/.cache/
+
+# 日志
+logs/
+
+# 报告
+allure-results/
+allure-report/
+
+# 系统文件
+.DS_Store
+Thumbs.db
