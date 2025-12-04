@@ -1,90 +1,125 @@
+# pages/base_page.py
 import os
 from datetime import datetime
-from playwright.sync_api import Page
+from playwright.sync_api import Page, TimeoutError as PlaywrightTimeoutError
 from logger import create_logger
-from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+
+
 class BasePage:
-    """所有页面的基类，封装通用方法"""
+    """页面基类：封装常用操作、等待、截图、批量文本获取等"""
 
     def __init__(self, page: Page):
         self.page = page
-        self.logger = create_logger()  # 加载日志
+        self.logger = create_logger()
 
+    # ----- 页面基础 -----
     def goto(self, url: str):
-        """打开指定 URL"""
         self.logger.info(f"打开页面：{url}")
         self.page.goto(url)
 
     def get_title(self) -> str:
-        """获取当前页面标题"""
         return self.page.title()
 
-    def locator(self, selector):
+    # ----- 定位 + 操作 -----
+    def locator(self, selector: str):
         self.logger.info(f"定位元素：{selector}")
         return self.page.locator(selector)
 
-    def click(self, selector):
-        """点击功能"""
+    def click(self, selector: str, timeout: int = 5000):
         self.logger.info(f"点击元素：{selector}")
-        self.page.locator(selector).click()
-
-    def fill(self, selector, text):
-        """输入文本"""
-        self.logger.info(f"输入 [{text}] 到元素：{selector}")
-        self.page.locator(selector).fill(text)
-
-    def get_text(self, selector):
-        """获取单个元素文本"""
-        self.logger.info(f"获取元素文本：{selector}")
-        return self.page.locator(selector).inner_text()
-
-    def get_texts(self, selector):
-        """获取多个元素文本（重要用于列表）"""
-        self.logger.info(f"批量获取文本：{selector}")
-        return self.page.locator(selector).all_text_contents()
-
-    def screenshot(self, name="screenshot"):
-        """自动存到 reports文件夹，文件名带时间戳"""
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        # 确保目录存在
-        report_dir = os.path.join(os.getcwd(), "reports")
-        os.makedirs(report_dir, exist_ok=True)
-
-        file_path = os.path.join(report_dir, f"{name}_{timestamp}.png")
-
-        self.page.screenshot(path=file_path)
-        self.logger.info(f"截图保存：{file_path}")
-        return file_path
-
-    def debug_failure(self, name="debug"):
-        self.logger.error("页面异常，保存调试信息")
         try:
-            self.screenshot(f"{name}.png")
-        except:
-            pass
-        try:
-            content = self.page.content()[:5000]
-            self.logger.error("页面HTML片段:\n" + content)
-        except:
-            self.logger.exception("获取 page.content 失败")
+            self.wait_visible(selector, timeout=timeout)
+            self.page.locator(selector).click()
+        except PlaywrightTimeoutError:
+            self.logger.exception(f"点击前等待元素超时：{selector}")
+            raise
 
-    def wait_visible(self, selector, timeout=5000):
-        """
-        等元素可见
-        """
+    def fill(self, selector: str, text: str, timeout: int = 5000):
+        self.logger.info(f"输入文本到元素：{selector} -> {text}")
+        try:
+            self.wait_visible(selector, timeout=timeout)
+            self.page.locator(selector).fill(text)
+        except PlaywrightTimeoutError:
+            self.logger.exception(f"填充前等待元素超时：{selector}")
+            raise
+
+    # ----- 等待 -----
+    def wait_visible(self, selector: str, timeout: int = 8000):
+        """等待元素可见"""
         self.logger.info(f"等待元素可见: {selector}")
         try:
             self.page.locator(selector).wait_for(state="visible", timeout=timeout)
         except PlaywrightTimeoutError:
-            self.logger.error(f"等待元素超时: {selector}")
-            self.page.screenshot(path="debug_wait_visible.png")
+            self.logger.error(f"等待元素可见超时: {selector}")
+            self.debug_failure(f"wait_visible_{self._safe_name(selector)}")
             raise
 
-    def wait_loaded(self, timeout=5000):
+    def wait_for_load(self, timeout: int = 10000):
+        """等待页面 load 完成"""
+        self.logger.info("等待页面 load 完成")
+        try:
+            self.page.wait_for_load_state("load", timeout=timeout)
+        except PlaywrightTimeoutError:
+            self.logger.error("等待页面 load 超时")
+            self.debug_failure("wait_for_load")
+            raise
+
+    # ----- 批量文本获取（batch_text 的实现） -----
+    def get_texts(self, selector: str):
         """
-        等待页面加载完成（document.readyState=='complete'）
+        批量获取元素文本，返回 list[str]。
+        这是我们实现的 batch_text（别名兼容）。
         """
-        self.logger.info("等待页面加载完成")
-        self.page.wait_for_load_state("load", timeout=timeout)
+        self.logger.info(f"批量获取文本：{selector}")
+        try:
+            # 等待至少有一个匹配项出现（短超时）
+            self.page.locator(selector).first.wait_for(state="visible", timeout=5000)
+        except PlaywrightTimeoutError:
+            self.logger.warning(f"批量获取文本等待可见超时（可能无结果）：{selector}")
+            # 不立刻 raise，返回空列表；调用方可断言
+            return []
+
+        # all_text_contents() 会返回元素文本数组（包括文本和子元素文本）
+        try:
+            texts = self.page.locator(selector).all_text_contents()
+            # 清洗：去掉纯空白项并 strip
+            texts = [t.strip() for t in texts if t and t.strip()]
+            return texts
+        except Exception as e:
+            self.logger.exception(f"批量获取文本失败: {selector} -> {e}")
+            self.debug_failure(f"get_texts_{self._safe_name(selector)}")
+            raise
+
+    # 兼容不同命名的别名
+    batch_text = get_texts
+    get_text_list = get_texts
+
+    # ----- 截图与调试 -----
+    def screenshot(self, name: str = "screenshot") -> str:
+        report_dir = os.path.join(os.getcwd(), "reports")
+        os.makedirs(report_dir, exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        path = os.path.join(report_dir, f"{name}_{ts}.png")
+        try:
+            self.page.screenshot(path=path)
+            self.logger.info(f"截图保存：{path}")
+        except Exception:
+            self.logger.exception("截图失败")
+        return path
+
+    def debug_failure(self, name: str = "debug"):
+        """失败时统一调试产物：截图 + 保存 page.content() 小片段"""
+        try:
+            img = self.screenshot(name)
+        except Exception:
+            img = None
+        try:
+            content = self.page.content()[:5000]
+            self.logger.error("页面 HTML 片段（前5k）：\n" + content)
+        except Exception:
+            self.logger.exception("获取页面 HTML 失败")
+        return img
+
+
+
 

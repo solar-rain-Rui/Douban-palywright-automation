@@ -16,7 +16,7 @@ class DoubanTop250Page(BasePage):
         如果被重定向到 sec.douban.com，会截图并记录 page.content() 以便排查。
         """
         self.logger.info(f"打开豆瓣 Top250：{self.URL}")
-        self.page.goto(self.URL)
+        super().goto(self.URL)
 
         # 等待列表项出现（这是判断页面加载成功的关键）
         try:
@@ -39,15 +39,40 @@ class DoubanTop250Page(BasePage):
         self.logger.info(f"实际获取到 {len(titles)} 条标题")
         return titles
     #搜索
-    def search(self, keyword: str):
+    def search(self, keyword: str, timeout: int = 15000):
         self.logger.info(f"执行搜索：{keyword}")
-        search_input = self.locator("#inp-query")
-        search_input.fill(keyword)
 
-        # 点击搜索按钮
-        self.locator(".inp-btn").click()
+        try:
+            search_url = f"https://search.douban.com/movie/subject_search?search_text={keyword}&cat=1002"
+            self.page.goto(search_url)
 
-        # 等待结果出现
-        self.wait_visible(".item")  # 搜索结果条目
+            # 等 URL 变成搜索页
+            self.page.wait_for_url(lambda url: "subject_search" in url, timeout=timeout)
+
+            # 等至少一个结果容器节点
+            self.page.locator("div.item-root").first.wait_for(state="visible", timeout=timeout)
+
+            self.logger.info("搜索结果已出现")
+
+        except Exception as e:
+            self.logger.error(f"搜索失败：{repr(e)}")
+            self.debug_failure("search_fail")
+            raise
+
+    def get_results(self):
+        """
+        返回搜索结果标题列表
+        """
+        try:
+            # 改成匹配搜索页结构
+            results = self.batch_text("div.detail a")
+            self.logger.info(f"共提取到 {len(results)} 条结果")
+            return results
+        except Exception as e:
+            self.logger.error("提取搜索结果失败：" + repr(e))
+            return []
+
+
+
 
 
