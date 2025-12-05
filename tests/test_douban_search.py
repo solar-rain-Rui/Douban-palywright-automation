@@ -7,14 +7,13 @@ import pytest
     "霸王别姬",
     "狮子王"
 ])
-def test_douban_search(page,keyword):
+def test_douban_search(page,keyword,douban):
     """验证搜索功能"""
 
-    douban = DoubanTop250Page(page)
+    #douban = DoubanTop250Page(page)
 
     douban.goto()
     douban.wait_for_load()
-
     douban.search(keyword)
 
     results = douban.get_results()

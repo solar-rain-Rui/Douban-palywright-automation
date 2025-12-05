@@ -3,11 +3,11 @@ from playwright.sync_api import Page
 from pages.douban_page import  DoubanTop250Page
 
 
-def test_douban_top250_titles(page: Page):
+def test_douban_top250_titles(douban):
     """
     验证：豆瓣 Top250 页面电影标题是否加载成功
     """
-    douban = DoubanTop250Page(page)
+    #douban = DoubanTop250Page(page)
     douban.goto()
 
     titles = douban.get_movie_titles()

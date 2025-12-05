@@ -49,11 +49,12 @@ class DoubanTop250Page(BasePage):
             # 等 URL 变成搜索页
             self.page.wait_for_url(lambda url: "subject_search" in url, timeout=timeout)
 
-            # 等至少一个结果容器节点
-            self.page.locator("div.item-root").first.wait_for(state="visible", timeout=timeout)
+            # 结果容器稳一点
+            self.page.locator("div.item-root, div.result, .resul").first.wait_for(state="visible", timeout=timeout)
 
             self.logger.info("搜索结果已出现")
-
+            # ← 这一句是关键：返回标题列表，否则调用它的人拿到 None
+            return self.batch_text("div.detail a, div.result a, .item-root a, .title a")
         except Exception as e:
             self.logger.error(f"搜索失败：{repr(e)}")
             self.debug_failure("search_fail")
@@ -72,7 +73,15 @@ class DoubanTop250Page(BasePage):
             self.logger.error("提取搜索结果失败：" + repr(e))
             return []
 
+    def click_first_movie_result(self):
+        """
+        点击第一个搜索结果，等它可见，跳转到详情页
+        """
+        self.logger.info("点击第一个搜索结果进入详情页")
 
+        first_item = self.page.locator("div.item-root a, div.result a, .item-root a, .title a").first
+        first_item.wait_for(state="visible", timeout=8000)
+        first_item.click()
 
 
 

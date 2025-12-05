@@ -1,6 +1,6 @@
 import pytest
 import pytest_html
-
+from pages.douban_page import DoubanTop250Page
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call): #item:测试项对象 call:测试调用的上下文（setup、call、teardown）
@@ -16,3 +16,10 @@ def pytest_runtest_makereport(item, call): #item:测试项对象 call:测试调�
         if screenshot_path:
             report.extra = getattr(report, "extra", [])
             report.extra.append(pytest_html.extras.image(screenshot_path))
+
+@pytest.fixture
+def douban(page):
+    """提供 Douban 页面对象，支持依赖注入"""
+    douban_page = DoubanTop250Page(page)
+
+    return douban_page
