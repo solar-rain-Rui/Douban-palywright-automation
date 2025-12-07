@@ -1,0 +1,20 @@
+search_cases:
+  - name: 肖申克
+    expected_keywords:
+      - 肖
+      - Shawshank
+
+  - name: 霸王别姬
+    expected_keywords:
+      - 霸王
+      - Farewell
+
+  - name: 狮子王
+    expected_keywords:
+      - 狮
+      - Lion
+
+  - name: 阿甘正传
+    expected_keywords:
+      - 甘
+      - Forrest

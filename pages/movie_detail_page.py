@@ -19,9 +19,14 @@ class MovieDetailPage(BasePage):
         titles = self.batch_text("h1")
         return titles[0] if titles else ""
 
-    def get_rating(self):
-        """
-        获取评分（示例，用于扩展）
-        """
-        rating = self.batch_text(".rating_num")
-        return rating[0] if rating else None
+    def get_movie_rating(self):
+        """获取评分"""
+        ratings = self.batch_text("strong.rating_num")
+        return ratings[0] if ratings else ""
+
+    def get_intro_text(self):
+        """获取简介"""
+        intro = self.batch_text("#link-report .intro, .related-info .indent span")
+        return intro[0] if intro else ""
+
+   

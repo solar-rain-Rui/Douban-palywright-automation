@@ -1,0 +1,18 @@
+detail_cases:
+  - title: 肖申克
+    asserts:
+      title_contains: 肖
+      expect_rating: true
+      expect_director: true
+
+  - title: 霸王别姬
+    asserts:
+      title_contains: 霸
+      expect_rating: true
+      expect_director: true
+
+  - title: 狮子王
+    asserts:
+      title_contains: 狮
+      expect_rating: true
+      expect_director: true
