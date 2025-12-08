@@ -21,7 +21,7 @@ class DoubanTop250Page(BasePage):
         # 等待列表项出现（这是判断页面加载成功的关键）
         try:
             # 列表项的外层 class 通常是 div.item
-            self.page.locator("div.item").first.wait_for(state="visible", timeout=10000)
+            self.page.locator("div.item").first.wait_for(state="visible", timeout=30000)
             self.logger.info("豆瓣 Top250 列表项已出现")
         except PlaywrightTimeoutError:
             self.debug_failure("top250_timeout")
