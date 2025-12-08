@@ -1,6 +1,7 @@
-# **Douban Playwright UI Automation Project**
+# **Douban Playwright UI Automation Project**  
   
-基于 Python + Playwright 实现豆瓣网 Web UI 自动化测试项目
+基于 Python + Playwright 实现豆瓣网 Web UI 自动化测试项目  
+
 Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actions CI
 
 ## 项目功能概述
