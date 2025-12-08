@@ -93,3 +93,7 @@ push 代码后自动执行 UI 测试：
 ✔ 执行测试
 ✔ 失败自动截图
 ✔ trace 文件可从 workflow artifacts 下载回放
+#### 执行效果展示
+<img width="2533" height="1459" alt="image" src="https://github.com/user-attachments/assets/939983ae-7811-4f70-90dd-a1830d3efaf0" />
+
+
