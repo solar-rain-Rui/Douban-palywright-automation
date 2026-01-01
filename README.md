@@ -2,7 +2,7 @@
 基于 Python + Playwright 实现豆瓣网 Web UI 自动化测试项目
 Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actions CI
 
-    项目功能概述
+  项目功能概述
 ✔ Page Object Model 设计
 ✔ Playwright Web UI 自动化
 ✔ YAML 数据驱动参数化测试
@@ -39,7 +39,7 @@ Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actio
 │   ├─ 📜base_page.py                # 所有页面的基类（封装通用方法）
 │   ├─ 📜douban_top250_page.py       # 首页与搜索功能对象封装
 │   ├─ 📜movie_detail_page.py        # 电影详情页封装（解析标题等元素）
-│   └─ 📜search_result_page.py       # 搜索结果页封装（获取搜索文字）
+│   └─ 📜search_result_page.py       # 搜索结果页封装（作为可扩展设计保留，用于后续逻辑拆分）
 │
 ├─ 📂tests                           # UI 自动化测试用例
 │   ├─ 📜test_douban_search.py       # 搜索功能验证（数据驱动）
