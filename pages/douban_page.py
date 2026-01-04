@@ -60,6 +60,18 @@ class DoubanTop250Page(BasePage):
             self.debug_failure("search_fail")
             raise
 
+    def search_by_input(self, keyword: str):
+        """
+        通过页面搜索框执行搜索（语义化定位示例）
+        """
+        self.logger.info(f"通过搜索框搜索：{keyword}")
+
+        search_input = self.page.get_by_placeholder("搜索")
+        search_input.fill(keyword)
+
+        search_button = self.page.get_by_role("button", name="搜索")
+        search_button.click()
+
     def get_results(self):
         """
         返回搜索结果标题列表
