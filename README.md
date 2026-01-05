@@ -1,8 +1,8 @@
-    Douban Playwright UI Automation Project
+## Douban Playwright UI Automation Project
 基于 Python + Playwright 实现豆瓣网 Web UI 自动化测试项目
 Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actions CI
 
-  项目功能概述
+### 项目功能概述
 ✔ Page Object Model 设计
 ✔ Playwright Web UI 自动化
 ✔ YAML 数据驱动参数化测试
@@ -10,7 +10,8 @@ Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actio
 ✔ 自动失败截图 + 调试 trace 采集
 ✔ GitHub Actions CI 集成
 
-    技术栈
+### 技术栈
+
 | 技术                | 作用       |
 | ----------------- | -------- |
 | Python            | 语言       |
@@ -21,7 +22,7 @@ Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actio
 | Playwright Trace  | 过程录制回放   |
 
 
-     功能点
+### 功能点
 ✔ 搜索电影
 ✔ 验证 UI 展示
 ✔ 失败自动截图,自动保存 HTML 片段
@@ -31,7 +32,7 @@ Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actio
 ✔ 日志记录
 ✔ 支持基于YAML的参数化测试,实现测试数据与逻辑解耦，提高用例可维护性与可扩展性
 
-    项目结构（示例）
+### 项目结构（示例）
 ```commandline
 📦 Douban-playwright-automation
 │
@@ -69,7 +70,7 @@ Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actio
 └─ 📜logger.py      # 工具封装（截图、日志输出、失败调试辅助）
 
 ```
-     执行录制功能说明
+### 执行录制功能说明
 
 项目默认开启 Playwright trace recording：
 
@@ -84,7 +85,11 @@ Playwright + Pytest + POM + 数据驱动 + 截图与 Trace 调试 + GitHub Actio
 
 HTML 调试片段输出
 
-    如何运行测试
+### 测试html报告截图展示
+
+！[测试报告截图](./images/report.png)
+
+### 如何运行测试
 1. 本地环境
 ```commandline
 pip install -r requirements.txt
